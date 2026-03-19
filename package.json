@@ -1,0 +1,38 @@
+{
+  "name": "lakeboard-converter",
+  "version": "0.1.0",
+  "description": "将 .lakeboard 文件转换为通用 Markdown 或 XMind 的命令行工具",
+  "type": "module",
+  "bin": {
+    "lakeboard-converter": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "convert": "tsx src/cli.ts convert"
+  },
+  "keywords": [
+    "lakeboard",
+    "markdown",
+    "xmind",
+    "converter",
+    "typescript"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "commander": "^14.0.1",
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
