@@ -116,6 +116,5 @@ npm run test
 
 ## Limitations
 
-- Focused on mind map exports from `diagramData.body`
 - Preserves text, hierarchy, and order, but not styling, color, or layout
 - New `.lakeboard` variants may require parser updates
