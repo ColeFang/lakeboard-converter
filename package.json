@@ -1,7 +1,7 @@
 {
   "name": "lakeboard-converter",
   "version": "0.1.0",
-  "description": "将 .lakeboard 文件转换为通用 Markdown 或 XMind 的命令行工具",
+  "description": "CLI to convert Yuque Lakeboard .lakeboard files into Markdown and XMind",
   "type": "module",
   "bin": {
     "lakeboard-converter": "./dist/cli.js"
