@@ -3,5 +3,4 @@ dist/
 verify-output/
 test-output/
 coverage/
-test/
 .DS_Store
