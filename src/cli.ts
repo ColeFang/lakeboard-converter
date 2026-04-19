@@ -11,6 +11,7 @@ program
 
 program
   .command('convert')
+  .description('转换指定文件（非交互式）')
   .argument('<input>', '输入文件路径（支持 .lakeboard 和 .xmind）')
   .option('-f, --format <format>', '导出格式：md | xmind | both', 'both')
   .option('--markdown-style <style>', 'Markdown 风格：generic | xmind', 'generic')
@@ -45,4 +46,14 @@ program
     }
   });
 
-program.parseAsync(process.argv);
+const args = process.argv.slice(2);
+const hasSubcommand = args.length > 0 && (args[0] === 'convert' || args[0] === 'help' || args[0] === '--help' || args[0] === '-h' || args[0] === '--version' || args[0] === '-V');
+
+if (hasSubcommand) {
+  program.parseAsync(process.argv);
+} else {
+  import('./tui.js').then(({ runInteractiveTUI }) => runInteractiveTUI()).catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  });
+}

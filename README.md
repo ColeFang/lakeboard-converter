@@ -12,6 +12,7 @@ CLI & Web tool to convert Yuque Lakeboard (`.lakeboard`) and XMind (`.xmind`) mi
 - Export generic Markdown
 - Export XMind-friendly Markdown
 - Generate `.xmind` files directly
+- **Interactive TUI** — guided step-by-step file selection and conversion
 - **Web UI** with drag-and-drop file upload, Markdown preview, and tree view
 
 ## Requirements
@@ -28,9 +29,22 @@ npm install
 
 ## Quick usage
 
-### CLI mode
+### Interactive TUI mode (recommended)
 
-#### Export generic Markdown
+```bash
+npm run dev
+```
+
+Launches an interactive terminal interface that guides you through:
+1. Selecting an input file (auto-discovery, file browser, or manual path entry)
+2. Choosing the output format (Markdown / XMind / both)
+3. Selecting the Markdown style (generic or XMind-friendly)
+4. Setting the output directory
+5. Conversion and result display
+
+### Non-interactive CLI mode
+
+For scripting and CI pipelines, use the `convert` subcommand directly:
 
 ```bash
 # From a .lakeboard file
@@ -38,23 +52,11 @@ npm run convert -- "/path/to/example.lakeboard" --format md --markdown-style gen
 
 # From a .xmind file
 npm run convert -- "/path/to/example.xmind" --format md --markdown-style generic
-```
 
-#### Export XMind-friendly Markdown
-
-```bash
-npm run convert -- "/path/to/example.xmind" --format md --markdown-style xmind
-```
-
-#### Export both Markdown and XMind
-
-```bash
+# Export both Markdown and XMind
 npm run convert -- "/path/to/example.lakeboard" --format both --out-dir ./dist
-```
 
-#### Overwrite existing files
-
-```bash
+# Overwrite existing files
 npm run convert -- "/path/to/example.xmind" --format both --overwrite
 ```
 
@@ -75,7 +77,7 @@ The Web UI provides:
 - Markdown source view and tree structure preview
 - Copy to clipboard and download `.md` file
 
-## CLI options
+## CLI options (non-interactive mode)
 
 | Option | Description |
 | --- | --- |
@@ -114,13 +116,13 @@ The Web UI provides:
 
 | Script | Description |
 | --- | --- |
-| `npm run dev` | Run CLI in development mode |
+| `npm run dev` | Launch interactive TUI |
 | `npm run dev:web` | Start Web UI development server |
 | `npm run build` | Build CLI for production |
 | `npm run build:web` | Build Web UI for production |
 | `npm run typecheck` | TypeScript type checking |
 | `npm run test` | Run tests |
-| `npm run convert` | Shorthand for CLI convert command |
+| `npm run convert` | Non-interactive CLI convert command |
 
 ## Development
 

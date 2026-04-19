@@ -12,7 +12,8 @@
 - 导出通用 Markdown
 - 导出适合 XMind 导入的 Markdown
 - 直接生成 `.xmind` 文件
-- **Web 界面**支持拖拽上传、Markdown 预览和树形结构查看
+- **交互式 TUI** — 引导式文件选择与转换流程
+- **Web 界面** 支持拖拽上传、Markdown 预览和树形结构查看
 
 ## 环境要求
 
@@ -28,9 +29,22 @@ npm install
 
 ## 快速使用
 
-### CLI 模式
+### 交互式 TUI 模式（推荐）
 
-#### 导出通用 Markdown
+```bash
+npm run dev
+```
+
+启动交互式终端界面，引导你完成：
+1. 选择输入文件（自动发现、目录浏览或手动输入路径）
+2. 选择导出格式（Markdown / XMind / 全部）
+3. 选择 Markdown 风格（通用 或 XMind 导入风格）
+4. 设置输出目录
+5. 执行转换并展示结果
+
+### 非交互式 CLI 模式
+
+适用于脚本和 CI 流水线，直接使用 `convert` 子命令：
 
 ```bash
 # 从 .lakeboard 文件
@@ -38,23 +52,11 @@ npm run convert -- "/path/to/example.lakeboard" --format md --markdown-style gen
 
 # 从 .xmind 文件
 npm run convert -- "/path/to/example.xmind" --format md --markdown-style generic
-```
 
-#### 导出 XMind 导入友好 Markdown
-
-```bash
-npm run convert -- "/path/to/example.xmind" --format md --markdown-style xmind
-```
-
-#### 同时导出 Markdown 和 XMind
-
-```bash
+# 同时导出 Markdown 和 XMind
 npm run convert -- "/path/to/example.lakeboard" --format both --out-dir ./dist
-```
 
-#### 覆盖已有文件
-
-```bash
+# 覆盖已有文件
 npm run convert -- "/path/to/example.xmind" --format both --overwrite
 ```
 
@@ -75,7 +77,7 @@ Web 界面提供：
 - Markdown 源码视图和树形结构预览
 - 一键复制和下载 `.md` 文件
 
-## CLI 参数
+## CLI 参数（非交互式模式）
 
 | 参数               | 说明                                |
 | ------------------ | ----------------------------------- |
@@ -117,13 +119,13 @@ Web 界面提供：
 
 | 脚本 | 说明 |
 | --- | --- |
-| `npm run dev` | 以开发模式运行 CLI |
+| `npm run dev` | 启动交互式 TUI |
 | `npm run dev:web` | 启动 Web 界面开发服务器 |
 | `npm run build` | 构建 CLI 生产版本 |
 | `npm run build:web` | 构建 Web 界面生产版本 |
 | `npm run typecheck` | TypeScript 类型检查 |
 | `npm run test` | 运行测试 |
-| `npm run convert` | CLI convert 命令快捷方式 |
+| `npm run convert` | 非交互式 CLI convert 命令 |
 
 ## 开发
 
