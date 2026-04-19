@@ -15,7 +15,6 @@ interface XMindTopic {
   };
   labels?: string[];
   href?: string;
-  markers?: Array<{ markerId?: string }>;
 }
 
 interface XMindSheet {

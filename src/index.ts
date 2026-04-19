@@ -1,7 +1,7 @@
 import { mkdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import type { MarkdownStyle, MindMapDocument, SourceFormat } from './core/types.js';
-import { parseLakeboardFile } from './core/parse-lakeboard.js';
+import { parseLakeboardFile, parseLakeboardContent } from './core/parse-lakeboard.js';
 import { parseXmindFile, parseXmindBuffer } from './core/parse-xmind.js';
 import { renderGenericMarkdown, renderXmindMarkdown } from './render/markdown.js';
 import { renderXmind } from './render/xmind.js';
@@ -115,9 +115,8 @@ export async function convertBuffer(
   if (sourceFormat === 'xmind') {
     document = await parseXmindBuffer(buffer);
   } else {
-    const content = Buffer.from(buffer as ArrayBuffer).toString('utf-8');
-    const { parseLakeboardContent } = await import('./core/parse-lakeboard.js');
-    document = parseLakeboardContent(content);
+    const bytes = buffer instanceof ArrayBuffer ? Buffer.from(buffer) : Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+    document = parseLakeboardContent(bytes.toString('utf-8'));
   }
 
   const markdown =

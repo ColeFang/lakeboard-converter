@@ -81,6 +81,7 @@ export function App() {
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('source');
   const [dragging, setDragging] = useState(false);
+  const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = useCallback(async (selectedFile: File, style: MarkdownStyle) => {
@@ -121,7 +122,23 @@ export function App() {
   }, [handleFileSelect]);
 
   const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(markdown);
+    try {
+      await navigator.clipboard.writeText(markdown);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback for non-secure contexts
+      const textarea = window.document.createElement('textarea');
+      textarea.value = markdown;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      window.document.body.appendChild(textarea);
+      textarea.select();
+      window.document.execCommand('copy');
+      window.document.body.removeChild(textarea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   }, [markdown]);
 
   const handleDownload = useCallback(() => {
@@ -264,12 +281,23 @@ export function App() {
                     </span>
                   </div>
                   <div className="result-actions">
-                    <button className="btn btn-secondary btn-sm" onClick={handleCopy}>
-                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="5" y="5" width="9" height="9" rx="1.5" />
-                        <path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" />
-                      </svg>
-                      复制
+                    <button className="btn btn-secondary btn-sm" onClick={handleCopy} aria-label="复制 Markdown 到剪贴板">
+                      {copied ? (
+                        <>
+                          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--success-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 8.5l3 3 7-7" />
+                          </svg>
+                          已复制
+                        </>
+                      ) : (
+                        <>
+                          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="5" y="5" width="9" height="9" rx="1.5" />
+                            <path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" />
+                          </svg>
+                          复制
+                        </>
+                      )}
                     </button>
                     <button className="btn btn-primary btn-sm" onClick={handleDownload}>
                       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -318,7 +346,7 @@ export function App() {
 
       <footer className="footer">
         MindMap Converter · 支持 .lakeboard 和 .xmind 格式 ·{' '}
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/ColeFang/lakeboard-converter" target="_blank" rel="noopener noreferrer">GitHub</a>
       </footer>
     </div>
   );

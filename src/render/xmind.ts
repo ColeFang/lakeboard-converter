@@ -38,8 +38,8 @@ export async function renderXmind(document: MindMapDocument): Promise<Buffer> {
   ];
 
   const metadata = {
-    creator: { name: 'lakeboard-converter' },
-    modifier: { name: 'lakeboard-converter' },
+    creator: { name: 'mindmap-converter' },
+    modifier: { name: 'mindmap-converter' },
     createdTime: now,
     modifiedTime: now,
   };
