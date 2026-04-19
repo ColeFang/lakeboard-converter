@@ -4,15 +4,23 @@ export interface TopicNode {
   order: number;
   children: TopicNode[];
   rawHtml?: string;
+  notes?: string;
+  labels?: string[];
+  href?: string;
 }
 
-export interface LakeboardDocument {
+export type SourceFormat = 'lakeboard' | 'xmind';
+
+export interface MindMapDocument {
   sourcePath?: string;
-  format: 'lakeboard';
+  format: SourceFormat;
   root: TopicNode;
   nodeCount: number;
   maxDepth: number;
 }
+
+/** @deprecated Use MindMapDocument instead */
+export type LakeboardDocument = MindMapDocument;
 
 export type MarkdownStyle = 'generic' | 'xmind';
 

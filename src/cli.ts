@@ -5,13 +5,13 @@ import { convertFile } from './index.js';
 const program = new Command();
 
 program
-  .name('lakeboard-converter')
-  .description('将 .lakeboard 文件转换为通用 Markdown 或 XMind')
-  .version('0.1.0');
+  .name('mindmap-converter')
+  .description('将 .lakeboard / .xmind 思维导图文件转换为 Markdown 或 XMind 格式')
+  .version('0.2.0');
 
 program
   .command('convert')
-  .argument('<input>', '输入的 .lakeboard 文件路径')
+  .argument('<input>', '输入文件路径（支持 .lakeboard 和 .xmind）')
   .option('-f, --format <format>', '导出格式：md | xmind | both', 'both')
   .option('--markdown-style <style>', 'Markdown 风格：generic | xmind', 'generic')
   .option('-o, --output <path>', '单一导出格式时指定输出文件')

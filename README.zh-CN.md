@@ -1,16 +1,18 @@
-# lakeboard-converter
+# mindmap-converter
 
 [English](./README.md) | 简体中文
 
-一个将语雀画板 `.lakeboard` 思维导图转换为 Markdown 和 XMind 的命令行工具。
+一个将语雀画板 `.lakeboard` 和 XMind `.xmind` 思维导图转换为 Markdown 的命令行 & Web 工具。
 
 ## 功能特性
 
-- 解析 `.lakeboard` 文件
-- 保留节点层级和原始顺序
+- 解析 `.lakeboard` 文件（语雀画板）
+- 解析 `.xmind` 文件（XMind Zen/2020+ 格式）
+- 保留节点层级、顺序、备注、标签和链接
 - 导出通用 Markdown
 - 导出适合 XMind 导入的 Markdown
 - 直接生成 `.xmind` 文件
+- **Web 界面**支持拖拽上传、Markdown 预览和树形结构查看
 
 ## 环境要求
 
@@ -26,61 +28,52 @@ npm install
 
 ## 快速使用
 
-### 导出通用 Markdown
+### CLI 模式
+
+#### 导出通用 Markdown
 
 ```bash
-npm run convert -- \
-  "/path/to/example.lakeboard" \
-  --format md \
-  --markdown-style generic
+# 从 .lakeboard 文件
+npm run convert -- "/path/to/example.lakeboard" --format md --markdown-style generic
+
+# 从 .xmind 文件
+npm run convert -- "/path/to/example.xmind" --format md --markdown-style generic
 ```
 
-默认输出：
-
-- `example.md`
-
-### 导出 XMind 导入友好 Markdown
+#### 导出 XMind 导入友好 Markdown
 
 ```bash
-npm run convert -- \
-  "/path/to/example.lakeboard" \
-  --format md \
-  --markdown-style xmind
+npm run convert -- "/path/to/example.xmind" --format md --markdown-style xmind
 ```
 
-默认输出：
-
-- `example.xmind-import.md`
-
-### 直接导出 XMind
+#### 同时导出 Markdown 和 XMind
 
 ```bash
-npm run convert -- \
-  "/path/to/example.lakeboard" \
-  --format xmind
+npm run convert -- "/path/to/example.lakeboard" --format both --out-dir ./dist
 ```
 
-默认输出：
-
-- `example.xmind`
-
-### 同时导出 Markdown 和 XMind
+#### 覆盖已有文件
 
 ```bash
-npm run convert -- \
-  "/path/to/example.lakeboard" \
-  --format both \
-  --out-dir ./dist
+npm run convert -- "/path/to/example.xmind" --format both --overwrite
 ```
 
-### 覆盖已有文件
+### Web 模式
 
 ```bash
-npm run convert -- \
-  "/path/to/example.lakeboard" \
-  --format both \
-  --overwrite
+# 启动开发服务器
+npm run dev:web
+
+# 构建生产版本
+npm run build:web
 ```
+
+Web 界面提供：
+- 拖拽上传 `.lakeboard` 和 `.xmind` 文件
+- 实时转换为 Markdown
+- 切换通用 / XMind 两种 Markdown 风格
+- Markdown 源码视图和树形结构预览
+- 一键复制和下载 `.md` 文件
 
 ## CLI 参数
 
@@ -92,12 +85,20 @@ npm run convert -- \
 | `--out-dir`        | 输出目录                            |
 | `--overwrite`      | 允许覆盖已有文件                    |
 
+## 支持的输入格式
+
+| 格式 | 扩展名 | 说明 |
+| --- | --- | --- |
+| 语雀画板 | `.lakeboard` | JSON 格式的思维导图 |
+| XMind | `.xmind` | ZIP 归档包含 `content.json`（仅支持 XMind Zen/2020+ 格式） |
+
 ## 输出格式
 
 ### 通用 Markdown
 
 - 根节点输出为一级标题
 - 子节点输出为嵌套列表
+- 备注以引用块形式渲染，链接以 Markdown 链接渲染
 - 适合 Git、文档系统和通用 Markdown 工具
 
 ### XMind 导入友好 Markdown
@@ -112,15 +113,29 @@ npm run convert -- \
 - 包含 `content.json`、`metadata.json` 和 `manifest.json`
 - 重点保留文本、层级和顺序
 
+## 脚本说明
+
+| 脚本 | 说明 |
+| --- | --- |
+| `npm run dev` | 以开发模式运行 CLI |
+| `npm run dev:web` | 启动 Web 界面开发服务器 |
+| `npm run build` | 构建 CLI 生产版本 |
+| `npm run build:web` | 构建 Web 界面生产版本 |
+| `npm run typecheck` | TypeScript 类型检查 |
+| `npm run test` | 运行测试 |
+| `npm run convert` | CLI convert 命令快捷方式 |
+
 ## 开发
 
 ```bash
-npm run build
-npm run typecheck
-npm run test
+npm run build        # 构建 CLI
+npm run build:web    # 构建 Web 界面
+npm run typecheck    # 类型检查
+npm run test         # 运行测试
 ```
 
 ## 当前限制
 
 - 保留文本、层级和顺序，但不保留样式、颜色和布局信息
+- 不支持 XMind 8（旧版 XML 格式），仅支持 XMind Zen/2020+（JSON 格式）
 - 如果遇到新的 `.lakeboard` 结构变体，可能需要补充解析逻辑

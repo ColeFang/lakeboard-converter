@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { normalizeTree } from './normalize.js';
-import type { LakeboardDocument, TopicNode } from './types.js';
+import type { MindMapDocument, TopicNode } from './types.js';
 import { validateTree } from './validate.js';
 import { normalizeInlineText } from '../utils/text.js';
 
@@ -28,16 +28,7 @@ function convertNode(node: RawNode, order: number): TopicNode {
   };
 }
 
-export async function parseLakeboardFile(filePath: string): Promise<LakeboardDocument> {
-  const content = await readFile(filePath, 'utf-8');
-  let data: RawLakeboardFile;
-
-  try {
-    data = JSON.parse(content) as RawLakeboardFile;
-  } catch (error) {
-    throw new Error(`无法解析 .lakeboard 文件：${error instanceof Error ? error.message : String(error)}`);
-  }
-
+function parseLakeboardData(data: RawLakeboardFile, sourcePath?: string): MindMapDocument {
   if (data.format !== 'lakeboard') {
     throw new Error('输入文件不是受支持的 lakeboard JSON 格式');
   }
@@ -56,10 +47,27 @@ export async function parseLakeboardFile(filePath: string): Promise<LakeboardDoc
   const { nodeCount, maxDepth } = validateTree(root);
 
   return {
-    sourcePath: filePath,
+    sourcePath,
     format: 'lakeboard',
     root,
     nodeCount,
     maxDepth,
   };
+}
+
+export async function parseLakeboardFile(filePath: string): Promise<MindMapDocument> {
+  const content = await readFile(filePath, 'utf-8');
+  return parseLakeboardContent(content, filePath);
+}
+
+export function parseLakeboardContent(content: string, sourcePath?: string): MindMapDocument {
+  let data: RawLakeboardFile;
+
+  try {
+    data = JSON.parse(content) as RawLakeboardFile;
+  } catch (error) {
+    throw new Error(`无法解析 .lakeboard 文件：${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  return parseLakeboardData(data, sourcePath);
 }

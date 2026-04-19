@@ -1,9 +1,16 @@
 import { mkdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import type { MarkdownStyle } from './core/types.js';
+import type { MarkdownStyle, MindMapDocument, SourceFormat } from './core/types.js';
 import { parseLakeboardFile } from './core/parse-lakeboard.js';
+import { parseXmindFile, parseXmindBuffer } from './core/parse-xmind.js';
 import { renderGenericMarkdown, renderXmindMarkdown } from './render/markdown.js';
 import { renderXmind } from './render/xmind.js';
+
+export type { MindMapDocument, TopicNode, SourceFormat, MarkdownStyle } from './core/types.js';
+export { parseLakeboardFile } from './core/parse-lakeboard.js';
+export { parseXmindFile, parseXmindBuffer } from './core/parse-xmind.js';
+export { renderGenericMarkdown, renderXmindMarkdown } from './render/markdown.js';
+export { renderXmind } from './render/xmind.js';
 
 export interface ConvertResult {
   outputs: string[];
@@ -18,6 +25,13 @@ export interface ConvertInputOptions {
   output?: string;
   outDir?: string;
   overwrite?: boolean;
+}
+
+function detectSourceFormat(filePath: string): SourceFormat {
+  const ext = path.extname(filePath).toLowerCase();
+  if (ext === '.lakeboard') return 'lakeboard';
+  if (ext === '.xmind') return 'xmind';
+  throw new Error(`不支持的输入文件格式：${ext}（仅支持 .lakeboard 和 .xmind）`);
 }
 
 async function ensureWritable(filePath: string, overwrite = false): Promise<void> {
@@ -53,8 +67,16 @@ function resolveOutputPaths(options: ConvertInputOptions): { mdPath?: string; xm
   };
 }
 
+async function parseInputFile(filePath: string): Promise<MindMapDocument> {
+  const sourceFormat = detectSourceFormat(filePath);
+  if (sourceFormat === 'xmind') {
+    return parseXmindFile(filePath);
+  }
+  return parseLakeboardFile(filePath);
+}
+
 export async function convertFile(options: ConvertInputOptions): Promise<ConvertResult> {
-  const document = await parseLakeboardFile(options.input);
+  const document = await parseInputFile(options.input);
   const { mdPath, xmindPath } = resolveOutputPaths(options);
   const outputs: string[] = [];
 
@@ -81,4 +103,25 @@ export async function convertFile(options: ConvertInputOptions): Promise<Convert
     nodeCount: document.nodeCount,
     maxDepth: document.maxDepth,
   };
+}
+
+export async function convertBuffer(
+  buffer: Buffer | ArrayBuffer | Uint8Array,
+  sourceFormat: SourceFormat,
+  markdownStyle: MarkdownStyle = 'generic',
+): Promise<{ markdown: string; document: MindMapDocument }> {
+  let document: MindMapDocument;
+
+  if (sourceFormat === 'xmind') {
+    document = await parseXmindBuffer(buffer);
+  } else {
+    const content = Buffer.from(buffer as ArrayBuffer).toString('utf-8');
+    const { parseLakeboardContent } = await import('./core/parse-lakeboard.js');
+    document = parseLakeboardContent(content);
+  }
+
+  const markdown =
+    markdownStyle === 'xmind' ? renderXmindMarkdown(document) : renderGenericMarkdown(document);
+
+  return { markdown, document };
 }

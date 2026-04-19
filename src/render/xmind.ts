@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import type { LakeboardDocument, TopicNode } from '../core/types.js';
+import type { MindMapDocument, TopicNode } from '../core/types.js';
 
 interface XMindTopic {
   id: string;
@@ -24,7 +24,7 @@ function toXmindTopic(node: TopicNode): XMindTopic {
   return topic;
 }
 
-export async function renderXmind(document: LakeboardDocument): Promise<Buffer> {
+export async function renderXmind(document: MindMapDocument): Promise<Buffer> {
   const zip = new JSZip();
   const now = new Date().toISOString();
 
